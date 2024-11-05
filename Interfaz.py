@@ -8,42 +8,42 @@ class LabyrinthCreator:
     def __init__(self, root):
         self.root = root
         self.root.title("Labyrinth Creator")
-        self.root.geometry("850x650")  # Updated height to 650
+        self.root.geometry("850x650")
 
-        # Create main frame
+
         self.main_frame = tk.Frame(root)
-        self.main_frame.pack(expand=True, padx=20, pady=10)  # Reduced pady
+        self.main_frame.pack(expand=True, padx=20, pady=10)
 
-        # Create stats frame for ant
+
         self.stats_frame = tk.Frame(self.main_frame)
-        self.stats_frame.pack(pady=5)  # Reduced pady
+        self.stats_frame.pack(pady=5)
 
-        # Canvas settings
-        self.cell_size = 40  # Reduced from 50 to 40 for better fit
+
+        self.cell_size = 40
         self.grid_size = 10
-        self.canvas = tk.Canvas(self.main_frame, width=400, height=400, bg='white')  # Reduced from 500x500
-        self.canvas.pack(pady=5)  # Reduced pady
+        self.canvas = tk.Canvas(self.main_frame, width=400, height=400, bg='white')
+        self.canvas.pack(pady=5)
 
-        # Initialize the matrix (0: empty, 1: wall, 2: azucar, 3: vino, 4: veneno, 5: ant)
+
         self.matrix = np.zeros((self.grid_size, self.grid_size), dtype=int)
 
-        # Initialize Hormiga with stats frame
+
         self.hormiga = Hormiga(self.canvas, self.cell_size, self.stats_frame)
 
-        # Control panel
+
         self.control_panel = tk.Frame(self.main_frame)
-        self.control_panel.pack(pady=10)  # Reduced pady
+        self.control_panel.pack(pady=10)
 
-        # Mode states
-        self.current_mode = None  # None, 'wall', 'azucar', 'vino', 'veneno', 'ant'
 
-        # Store different types of items
+        self.current_mode = None
+
+
         self.walls = set()
         self.azucar = set()
         self.vino = set()
         self.veneno = set()
 
-        # Mode to matrix value mapping
+
         self.mode_to_value = {
             'wall': 1,
             'azucar': 2,
@@ -52,9 +52,9 @@ class LabyrinthCreator:
             'ant': 5
         }
 
-        # Control buttons with adjusted size
-        button_width = 15  # Reduced from 20
-        button_height = 1  # Reduced from 2
+
+        button_width = 15
+        button_height = 1
 
         self.wall_button = tk.Button(
             self.control_panel,
@@ -110,7 +110,7 @@ class LabyrinthCreator:
         )
         self.reset_button.pack(side=tk.LEFT, padx=5)
 
-        # Print Matrix button
+
         self.print_button = tk.Button(
             self.main_frame,
             text="Print Matrix",
@@ -120,15 +120,8 @@ class LabyrinthCreator:
         )
         self.print_button.pack(pady=5)
 
-        # Instructions with smaller font
-        self.instructions = tk.Label(
-            self.main_frame,
-            text="1. Click a mode button to enable placement\n2. Click on cells to place/remove items\n3. Border walls cannot be modified\n4. Only one ant can be placed",
-            justify=tk.LEFT,
-            font=("Arial", 9),  # Reduced font size
-            pady=5
-        )
-        self.instructions.pack()
+
+
 
         self.create_grid()
         self.create_borders()
@@ -136,27 +129,27 @@ class LabyrinthCreator:
         self.canvas.bind('<Button-1>', self.handle_click)
 
     def print_matrix(self):
-        print("\nCurrent Labyrinth Matrix:")
+        print("\nMatriz:")
         print(self.matrix)
 
     def toggle_mode(self, mode):
-        # Reset all buttons to OFF
-        self.wall_button.config(text="Wall Mode: OFF")
-        self.azucar_button.config(text="Azucar Mode: OFF")
-        self.vino_button.config(text="Vino Mode: OFF")
-        self.veneno_button.config(text="Veneno Mode: OFF")
-        self.ant_button.config(text="Ant Mode: OFF")
+
+        self.wall_button.config(text="Roca/Muro: OFF")
+        self.azucar_button.config(text="Azucar: OFF")
+        self.vino_button.config(text="Vino: OFF")
+        self.veneno_button.config(text="Veneno: OFF")
+        self.ant_button.config(text="Hormiga: OFF")
 
         if self.current_mode == mode:
             self.current_mode = None
         else:
             self.current_mode = mode
             button_text = {
-                'wall': 'Wall Mode: ON',
-                'azucar': 'Azucar Mode: ON',
-                'vino': 'Vino Mode: ON',
-                'veneno': 'Veneno Mode: ON',
-                'ant': 'Ant Mode: ON'
+                'wall': 'Roca: ON',
+                'azucar': 'Azucar: ON',
+                'vino': 'Vino: ON',
+                'veneno': 'Veneno: ON',
+                'hormiga': 'Hormiga: ON'
             }
             if mode == 'wall':
                 self.wall_button.config(text=button_text[mode])
@@ -170,32 +163,32 @@ class LabyrinthCreator:
                 self.ant_button.config(text=button_text[mode])
 
     def create_grid(self):
-        # Create vertical lines
+
         for i in range(self.grid_size + 1):
             x = i * self.cell_size
-            self.canvas.create_line(x, 0, x, 400, fill='gray')  # Updated height to 400
+            self.canvas.create_line(x, 0, x, 400, fill='gray')
 
-        # Create horizontal lines
+
         for i in range(self.grid_size + 1):
             y = i * self.cell_size
-            self.canvas.create_line(0, y, 400, y, fill='gray')  # Updated width to 400
+            self.canvas.create_line(0, y, 400, y, fill='gray')
 
     def create_borders(self):
-        # Add border walls
+
         for i in range(self.grid_size):
-            # Top border
+
             self.walls.add((i, 0))
             self.matrix[0][i] = 1
             self.fill_cell(i, 0, 'wall')
-            # Bottom border
+
             self.walls.add((i, self.grid_size - 1))
             self.matrix[self.grid_size - 1][i] = 1
             self.fill_cell(i, self.grid_size - 1, 'wall')
-            # Left border
+
             self.walls.add((0, i))
             self.matrix[i][0] = 1
             self.fill_cell(0, i, 'wall')
-            # Right border
+
             self.walls.add((self.grid_size - 1, i))
             self.matrix[i][self.grid_size - 1] = 1
             self.fill_cell(self.grid_size - 1, i, 'wall')
@@ -209,8 +202,8 @@ class LabyrinthCreator:
         if item_type == 'wall':
             self.canvas.create_rectangle(x1, y1, x2, y2, fill='black')
         elif item_type != 'ant':
-            # Calculate smaller square (80% smaller)
-            margin = self.cell_size * 0.1  # 10% margin on each side
+
+            margin = self.cell_size * 0.1
             x1 += margin
             y1 += margin
             x2 -= margin
@@ -228,47 +221,47 @@ class LabyrinthCreator:
         y1 = grid_y * self.cell_size
         x2 = x1 + self.cell_size
         y2 = y1 + self.cell_size
-        # Clear the entire cell
+
         self.canvas.create_rectangle(x1, y1, x2, y2, fill='white')
-        # Update matrix
+
         self.matrix[grid_y][grid_x] = 0
 
     def handle_click(self, event):
         if not self.current_mode:
-            messagebox.showinfo("Mode Off", "Please enable a mode to place items!")
+            messagebox.showinfo("Off", "Elija algo")
             return
 
-        # Convert click coordinates to grid coordinates
+
         grid_x = event.x // self.cell_size
         grid_y = event.y // self.cell_size
 
-        # Check if click is within bounds
+
         if 0 <= grid_x < self.grid_size and 0 <= grid_y < self.grid_size:
-            # Don't allow modifying border walls
+
             if grid_x in [0, self.grid_size - 1] or grid_y in [0, self.grid_size - 1]:
-                messagebox.showwarning("Invalid Action", "Cannot modify border walls!")
+                messagebox.showwarning("Error", "No puede")
                 return
 
             if self.current_mode == 'ant':
-                # Handle ant placement
-                if self.matrix[grid_y][grid_x] == 0:  # Only place ant in empty cells
-                    self.hormiga.remove_ant()  # Remove existing ant if any
+
+                if self.matrix[grid_y][grid_x] == 0:
+                    self.hormiga.remove_ant()
                     ant_pos = self.hormiga.create_ant(grid_x, grid_y)
                     if ant_pos:
                         self.matrix[grid_y][grid_x] = self.mode_to_value['ant']
                 return
 
-            # Remove any existing items at this location
+
             coord = (grid_x, grid_y)
             self.walls.discard(coord)
             self.azucar.discard(coord)
             self.vino.discard(coord)
             self.veneno.discard(coord)
 
-            # Clear the cell
+
             self.clear_cell(grid_x, grid_y)
 
-            # Get the current item set based on mode
+
             current_set = {
                 'wall': self.walls,
                 'azucar': self.azucar,
@@ -276,26 +269,26 @@ class LabyrinthCreator:
                 'veneno': self.veneno
             }[self.current_mode]
 
-            # Toggle the item
+
             if coord not in current_set:
                 current_set.add(coord)
                 self.fill_cell(grid_x, grid_y, self.current_mode)
-                # Update matrix with corresponding value
+
                 self.matrix[grid_y][grid_x] = self.mode_to_value[self.current_mode]
 
     def reset_labyrinth(self):
-        # Clear all items
+
         self.walls.clear()
         self.azucar.clear()
         self.vino.clear()
         self.veneno.clear()
         self.hormiga.remove_ant()
-        # Reset matrix
+
         self.matrix = np.zeros((self.grid_size, self.grid_size), dtype=int)
         self.canvas.delete("all")
         self.create_grid()
         self.create_borders()
-        # Reset modes
+
         self.current_mode = None
         self.toggle_mode(None)
 
