@@ -21,11 +21,11 @@ class Hormiga:
         self.eaten_sugar: Set[Tuple[int, int]] = set()
 
         # Create labels for stats
-        self.gen_label = tk.Label(stats_frame, text="Generation: 1")
+        self.gen_label = tk.Label(stats_frame, text="Generacion: 1")
         self.gen_label.pack(side=tk.LEFT, padx=5)
-        self.score_label = tk.Label(stats_frame, text="Score: 0")
+        self.score_label = tk.Label(stats_frame, text="Puntaje: 0")
         self.score_label.pack(side=tk.LEFT, padx=5)
-        self.best_label = tk.Label(stats_frame, text="Best Score: 0")
+        self.best_label = tk.Label(stats_frame, text="Mejor puntaje: 0")
         self.best_label.pack(side=tk.LEFT, padx=5)
 
         # Movement delay (in milliseconds)

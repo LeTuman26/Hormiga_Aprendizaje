@@ -7,24 +7,24 @@ from azucar import Azucar
 class LabyrinthCreator:
     def __init__(self, root):
         self.root = root
-        self.root.title("Labyrinth Creator")
+        self.root.title("Laberinto")
         self.root.geometry("850x650")
 
-        # Create main frame
+
         self.main_frame = tk.Frame(root)
         self.main_frame.pack(expand=True, padx=20, pady=10)
 
-        # Create stats frame for ant
+
         self.stats_frame = tk.Frame(self.main_frame)
         self.stats_frame.pack(pady=5)
 
-        # Canvas settings
+
         self.cell_size = 40
         self.grid_size = 10
         self.canvas = tk.Canvas(self.main_frame, width=400, height=400, bg='white')
         self.canvas.pack(pady=5)
 
-        # Initialize the matrix (0: empty, 1: wall, 2: azucar, 3: vino, 4: veneno, 5: ant)
+        
         self.matrix = np.zeros((self.grid_size, self.grid_size), dtype=int)
 
         # Initialize Hormiga and Azucar with stats frame
@@ -58,7 +58,7 @@ class LabyrinthCreator:
 
         self.wall_button = tk.Button(
             self.control_panel,
-            text="Wall Mode: OFF",
+            text="Muros: OFF",
             command=lambda: self.toggle_mode('wall'),
             width=button_width,
             height=button_height
@@ -67,7 +67,7 @@ class LabyrinthCreator:
 
         self.azucar_button = tk.Button(
             self.control_panel,
-            text="Azucar Mode: OFF",
+            text="Azucar: OFF",
             command=lambda: self.toggle_mode('azucar'),
             width=button_width,
             height=button_height
@@ -76,7 +76,7 @@ class LabyrinthCreator:
 
         self.vino_button = tk.Button(
             self.control_panel,
-            text="Vino Mode: OFF",
+            text="Vino: OFF",
             command=lambda: self.toggle_mode('vino'),
             width=button_width,
             height=button_height
@@ -85,7 +85,7 @@ class LabyrinthCreator:
 
         self.veneno_button = tk.Button(
             self.control_panel,
-            text="Veneno Mode: OFF",
+            text="Veneno: OFF",
             command=lambda: self.toggle_mode('veneno'),
             width=button_width,
             height=button_height
@@ -94,7 +94,7 @@ class LabyrinthCreator:
 
         self.ant_button = tk.Button(
             self.control_panel,
-            text="Ant Mode: OFF",
+            text="Hormiga: OFF",
             command=lambda: self.toggle_mode('ant'),
             width=button_width,
             height=button_height
@@ -107,7 +107,7 @@ class LabyrinthCreator:
 
         self.start_sim_button = tk.Button(
             self.simulation_panel,
-            text="Start Simulation",
+            text="Iniciar simulacion",
             command=self.toggle_simulation,
             width=button_width,
             height=button_height
@@ -116,7 +116,7 @@ class LabyrinthCreator:
 
         self.reset_button = tk.Button(
             self.simulation_panel,
-            text="Reset All",
+            text="Reiniciar todo",
             command=self.reset_labyrinth,
             width=button_width,
             height=button_height
@@ -126,7 +126,7 @@ class LabyrinthCreator:
         # Instructions
         self.instructions = tk.Label(
             self.main_frame,
-            text="1. Click a mode button to enable placement\n2. Click on cells to place/remove items\n3. Border walls cannot be modified\n4. Only one ant can be placed",
+            text="1. Presione un boton para habilitar un modo\n2. Presione en las celdas para colocar o remover\n3. Los bordes no se modifican\n4. Solo una hormiga a la vez",
             justify=tk.LEFT,
             font=("Arial", 9),
             pady=5
@@ -141,13 +141,13 @@ class LabyrinthCreator:
     def toggle_simulation(self):
         if not self.hormiga.running:
             if self.hormiga.position is None:
-                messagebox.showwarning("Warning", "Please place an ant before starting the simulation!")
+                messagebox.showwarning("Error", "Active un modo")
                 return
             self.hormiga.set_matrix(self.matrix)
-            self.start_sim_button.config(text="Stop Simulation")
+            self.start_sim_button.config(text="Detener simulacion")
             self.hormiga.start_simulation()
         else:
-            self.start_sim_button.config(text="Start Simulation")
+            self.start_sim_button.config(text="Iniciar simulacion")
             self.hormiga.stop_simulation()
             # Reset sugar display
             self.azucar.reset_for_new_generation()
@@ -213,22 +213,22 @@ class LabyrinthCreator:
         self.azucar.remove_sugar(grid_x, grid_y)
 
     def toggle_mode(self, mode):
-        self.wall_button.config(text="Wall Mode: OFF")
-        self.azucar_button.config(text="Azucar Mode: OFF")
-        self.vino_button.config(text="Vino Mode: OFF")
-        self.veneno_button.config(text="Veneno Mode: OFF")
-        self.ant_button.config(text="Ant Mode: OFF")
+        self.wall_button.config(text="Muros: OFF")
+        self.azucar_button.config(text="Azucar: OFF")
+        self.vino_button.config(text="Vino: OFF")
+        self.veneno_button.config(text="Veneno: OFF")
+        self.ant_button.config(text="Hormiga: OFF")
 
         if self.current_mode == mode:
             self.current_mode = None
         else:
             self.current_mode = mode
             button_text = {
-                'wall': 'Wall Mode: ON',
-                'azucar': 'Azucar Mode: ON',
-                'vino': 'Vino Mode: ON',
-                'veneno': 'Veneno Mode: ON',
-                'ant': 'Ant Mode: ON'
+                'wall': 'Muros: ON',
+                'azucar': 'Azucar: ON',
+                'vino': 'Vino: ON',
+                'veneno': 'Veneno: ON',
+                'ant': 'Hormiga: ON'
             }
             if mode == 'wall':
                 self.wall_button.config(text=button_text[mode])
@@ -243,7 +243,7 @@ class LabyrinthCreator:
 
     def handle_click(self, event):
         if not self.current_mode:
-            messagebox.showinfo("Mode Off", "Please enable a mode to place items!")
+            messagebox.showinfo("Modo Off", "Active un modo")
             return
 
         grid_x = event.x // self.cell_size
@@ -251,7 +251,7 @@ class LabyrinthCreator:
 
         if 0 <= grid_x < self.grid_size and 0 <= grid_y < self.grid_size:
             if grid_x in [0, self.grid_size - 1] or grid_y in [0, self.grid_size - 1]:
-                messagebox.showwarning("Invalid Action", "Cannot modify border walls!")
+                messagebox.showwarning("Error", "No puede modificar los bordes")
                 return
 
             if self.current_mode == 'ant':
@@ -297,7 +297,7 @@ class LabyrinthCreator:
         self.current_mode = None
         self.toggle_mode(None)
         self.hormiga.stop_simulation()
-        self.start_sim_button.config(text="Start Simulation")
+        self.start_sim_button.config(text="Iniciar simulacion")
 
 def main():
     root = tk.Tk()
